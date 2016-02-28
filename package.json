@@ -1,0 +1,25 @@
+{
+  "name": "monstera",
+  "version": "0.1.0",
+  "description": "A small library for rapid client-side web app development",
+  "main": "monstera.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "client",
+    "router",
+    "dom",
+    "rest",
+    "forms",
+    "ajax",
+    "browser"
+  ],
+  "author": "plugnburn",
+  "license": "ISC",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-coffee": "^1.0.0",
+    "grunt-contrib-uglify": "^0.11.1"
+  }
+}
