@@ -27,7 +27,7 @@ DOM manupulation is the first-priority thing in Monstera. The library provides a
 - `Monstera.DOM.on(selector, event, callback)` - setup a live `event` listener on any elements matching the `selector` or their descendants. You can specify several events, space-separated. Two parameters are passed to the `callback`: a standard DOM `Event` object and the actual element the listener was attached to.
 - `Monstera.DOM.off(selector, event)` - remove a live `event` listener for any elements matching the `selector` or their descendants.
 - `Monstera.DOM.qS(selector)` - return the first element of the document matching the `selector` (shortcut for `window.document.querySelector`)
-- `Monstera.DOM.qSA(selector)` - return a DOM collection of all elements in te document matching the `selector` (shortcut for `window.document.querySelectorAll`)
+- `Monstera.DOM.qSA(selector)` - return a DOM collection of all elements in the document matching the `selector` (shortcut for `window.document.querySelectorAll`)
 - `Monstera.DOM.prevent(eventObject)` - a shortcut to prevent any event from its default action and further propagation.
 - `Monstera.DOM.setupDropzone(selector, dropCallback)` - an easy way to set up basic drag-n-drop capabilities. Drop event object is passed to the callback.
 
