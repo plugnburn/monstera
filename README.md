@@ -68,7 +68,7 @@ If you use just the default adapter (`Monstera.Data.LocalStorageAdapter`), you w
 MyStore.myProp = 'some value'
 MyStore.save() // we saved myProp to some remote storage
 MyStore.sync()
-console.log MyStore.otherProp // otherProp was set remotely and now we've fetched it
+console.log(MyStore.otherProp) // otherProp was set remotely and now we've fetched it
 ```
 
 Each `Monstera.Data.Store` instance can have unlimited subscriptions. A subscription is a callback that runs on each `save()` or `sync()` for that storage. To subscribe for a change, just call `subscribe(callback)` method:
@@ -114,10 +114,10 @@ Monstera.REST
 
 All basic interaction with server-side is simplified for you. First of all, Monstera has 4 popular HTTP method shortcuts:
 
-- `Monstera.REST.get(url, callback[, errorCallback)`
-- `Monstera.REST.post(url, object, callback[, errorCallback)`
-- `Monstera.REST.put(url, object, callback[, errorCallback)`
-- `Monstera.REST.delete(url, callback[, errorCallback)`
+- `Monstera.REST.get(url, callback[, errorCallback])`
+- `Monstera.REST.post(url, object, callback[, errorCallback])`
+- `Monstera.REST.put(url, object, callback[, errorCallback])`
+- `Monstera.REST.delete(url, callback[, errorCallback])`
 
 All success callbacks accept a single parameter: response data object. Error callbacks, if specified, accept two parameters: response data object and HTTP status code.
 
