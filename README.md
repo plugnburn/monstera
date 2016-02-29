@@ -6,7 +6,7 @@ Monstera: tiny web framework with great capabilities
 How to obtain
 -------------
 
-You can either download/include ready JS file [here](https://cdn.rawgit.com/plugnburn/monstera/54bb549ff85978c2ad9979d47b9fe579862e7daf/output/monstera.js) or install all the necessary dependencies (Git, Node, NPM and `grunt-cli`) and then run:
+You can either download/include ready JS file [here](https://cdn.rawgit.com/plugnburn/monstera/03183fc5e84abfe394f4b3390f3c9729bfa7cbd8/output/monstera.js) or install all the necessary dependencies (Git, Node, NPM and `grunt-cli`) and then run:
 
 ```
 git clone https://github.com/plugnburn/monstera.git
