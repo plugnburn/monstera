@@ -20,10 +20,10 @@ do ->
 				params: []
 				handler: cb
 			regexString = path.replace /\//g, '\\/'
-			paramMatches = path.match /:([^/]+)/ig
-			for rawParam in paramMatches
-				cacheObj.params.push rawParam.substr(1)
-				regexString = regexString.replace rawParam, '([^/]+)'
+			if (paramMatches = path.match /:([^/]+)/ig)?
+				for rawParam in paramMatches
+					cacheObj.params.push rawParam.substr(1)
+					regexString = regexString.replace rawParam, '([^/]+)'
 			cacheObj.regex = new RegExp regexString, 'i'
 			routeCache[path] = cacheObj
 		remove: (path) ->
