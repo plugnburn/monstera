@@ -1,7 +1,7 @@
 Monstera: tiny web framework with great capabilities
 ====================================================
 
-**Monstera** (or `monstera.js`) is a very small (under 7 Kbytes minified) yet quite powerful microframework that allows you to build reach client-side web apps in a more consistent and a bit easier way.
+**Monstera** (or `monstera.js`) is a very small (under 7 KB minified, 2.8 KB minified+gzipped) yet quite powerful microframework that allows you to build reach client-side web apps in a more consistent and a bit easier way.
 
 How to obtain
 -------------
