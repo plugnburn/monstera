@@ -167,13 +167,18 @@ Monstera.Templates.setupFetcher(function(tplName, callback) {
 
 Easy, right? But the second method, `Monstera.Templates.setupRenderer`, is much more significant and must be called properly in order for entire templating system to work. This is where you bind `Monstera.Templates` module with the actual templating engine of your choice.
 
-It also accepts one function with the following two parameters: template content and passed object with variables. Based on them, it must return a ready-to-output HTML string. For example, let's register a [Mustache.js](https://github.com/janl/mustache.js) renderer:
+It also accepts one function with the following two parameters: template content and passed object with variables. Based on them, it must return a ready-to-output HTML string. For example, let's register a [Mustache.js](https://github.com/janl/mustache.js) renderer (without partials support):
 
 ```
 Monstera.Templates.setupRenderer(function(tplContent, params) {
 	return Mustache.render(tplContent, params)
 })
 ```
+
+But as we see that callback parameters are matching actual renderer parameters, we can strip it down to:
+
+`Monstera.Templates.setupRenderer(Mustache.render)`
+
 
 Simple as that.
 
