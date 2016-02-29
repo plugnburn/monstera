@@ -29,7 +29,7 @@ DOM manupulation is the first-priority thing in Monstera. The library provides a
 - `Monstera.DOM.qS(selector)` - return the first element of the document matching the `selector` (shortcut for `window.document.querySelector`)
 - `Monstera.DOM.qSA(selector)` - return a DOM collection of all elements in te document matching the `selector` (shortcut for `window.document.querySelectorAll`)
 - `Monstera.DOM.prevent(eventObject)` - a shortcut to prevent any event from its default action and further propagation.
-- `Monstera.DOM.setupDropzone(selector, dropCallback)` - an easy way to set up a basic drag-n-drop capabilities. Drop event object is passed to the callback.
+- `Monstera.DOM.setupDropzone(selector, dropCallback)` - an easy way to set up basic drag-n-drop capabilities. Drop event object is passed to the callback.
 
 Monstera.Routes
 ---------------
@@ -195,3 +195,8 @@ If you need, for whatever reason, just to render a template with parameters into
 `Monstera.Templates.renderText(templatePathOrName, params, callback)`
 
 And it will just return rendered HTML into the callback.
+
+Addons
+------
+
+Have you seen an empty `src/addons/` directory if you have cloned the repo? It's right for you. You can place any single `*.coffee` file there (in any nested directory structure if you wish) and it will be built into the `output/monstera.js` file as an addon ready to be distributed alongside the core framework. This way you can extend Monstera functionality building on top of its features. Create a pull request when you think your addon is ready for sharing with the world, and all useful addons will be included in this repo.
