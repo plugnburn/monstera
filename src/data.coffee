@@ -1,64 +1,87 @@
-class MonsteraStoreAdapter
-	constructor: (setter, getter, remover) ->
-		@set = setter
-		@get = getter
-		@remove = remover
+StorageCache = {}
+StorageKeyPrefix = 'monstera.'
+DynaStoreAttrName = 'data-dyna-store'
 
-class MonsteraStore
+readStorage = (storageObject) ->
+	physicalKey = StorageKeyPrefix + storageObject.key
+	propSet = {}
+	try propSet = JSON.parse window[storageObject.storageEngine].getItem physicalKey
+	for own prop, val of propSet
+		storageObject[prop] = val
+	return storageObject
 
-	constructor: (key, adapter = MonsteraLib.Data.LocalStorageAdapter) ->
-		Object.defineProperty this, 'key', {configurable: true, writable: true, value: key}
-		Object.defineProperty this, 'adapter', {configurable: true, writable: true, value: adapter}
-		Object.defineProperty this, 'internalObject', {configurable: true, writable: true, value: {}}
-		Object.defineProperty this, 'subscriptions', {configurable: true, writable: true, value: {}}
-		@sync()
-			
-	sync: () ->
-		@internalObject = @adapter.get(@key)
-		@internalObject = {} unless @internalObject
-		for own prop, val of @internalObject
-			@[prop] = val
-		for own subId, cb of @subscriptions
-			cb.call @
-		true
-
-	save: () ->
-		@internalObject = {}
-		for own prop, val of this
-			@internalObject[prop] = val
-		@adapter.set @key, @internalObject
-		for own subId, cb of @subscriptions
-			cb.call @
-		true
-		
-	subscribe: (cb) ->
-		loop
-			subId = "monstera-sub-#{Math.random()*10000|0}"
-			break unless @subscriptions[subId]?
-		@subscriptions[subId] = cb
-		subId
+writeStorage = (storageObject) ->
+	physicalKey = StorageKeyPrefix + storageObject.key
+	window[storageObject.storageEngine].setItem physicalKey, JSON.stringify(storageObject)
 	
-	unsubscribe: (subId) -> delete @subscriptions[subId] if @subscriptions[subId]?
+destroyStorage = (storageObject) ->
+	physicalKey = StorageKeyPrefix + storageObject.key
+	window[storageObject.storageEngine].removeItem physicalKey
 	
-	destroy: () ->
-		@adapter.remove @key
-		@adapter = null
-		@key = null
-		@internalObject = null
-		@subscriptions = null
-		delete @subscriptions
-		delete @key
-		delete @internalObject
-		delete @adapter
-		for own prop, val of this
-			delete this[prop]
-		delete this
+# bind DynaStore listeners to any newly created storage object
+# returns storage-to-element subscription id
 
-
-MonsteraLib.Data =
-	Store: MonsteraStore
-	Adapter: MonsteraStoreAdapter
+bindDynaStoreListeners = (key) ->
+	DOM = MonsteraLib.DOM
 	
-MonsteraLib.Data.LocalStorageAdapter = new MonsteraLib.Data.Adapter ((key, value) -> try window.localStorage.setItem "monstera.#{key}", JSON.stringify(value)),
-	((key) -> try JSON.parse window.localStorage.getItem "monstera.#{key}")
-	((key) -> try window.localStorage.removeItem "monstera.#{key}")
+	# element-to-storage binding
+	elemToStorageHandler = ->
+		attr = @getAttribute DynaStoreAttrName
+		[storageKey, propName] = attr.split '.'
+		StorageCache[storageKey][propName] = DOM.getValue this
+		StorageCache[storageKey].save()
+	e2sSelPart = '['+DynaStoreAttrName+'^="'+key+'."]'
+	DOM.on "input#{e2sSelPart}, textarea#{e2sSelPart}, [contenteditable]#{e2sSelPart}", 'input', elemToStorageHandler
+	DOM.on "select#{e2sSelPart}", 'change', elemToStorageHandler
+	
+	# storage-to-element binding
+	StorageCache[key].subscribe ->
+		DOM.ready =>
+			for own prop, val of this
+				if (elemSet = DOM.qSA '['+DynaStoreAttrName+'="'+key+'.'+prop+'"]')?
+					DOM.setValue elem, val for elem in elemSet
+
+MonsteraLib.Data = 
+	Store: (key) ->
+		unless StorageCache[key]? # create and cache a new storage object
+			storageObject =
+				save: -> 
+					writeStorage this
+					for own subId, cb of @subscriptions
+						cb.call StorageCache[key]
+					this
+				subscribe: (cb) ->
+					loop
+						subId = "monstera-sub-#{Math.random()*10000|0}"
+						break unless @subscriptions[subId]?
+					@subscriptions[subId] = cb
+					subId
+				unsubscribe: (subId) -> 
+					delete @subscriptions[subId] if @subscriptions[subId]?
+					this
+				destroy: -> 
+					destroyStorage this
+					delete StorageCache[@key]
+					delete this
+			if key.indexOf('session:') is 0
+				Object.defineProperty storageObject, 'storageEngine', {value: 'sessionStorage'}
+				key = key.split(':')[1]
+			else
+				Object.defineProperty storageObject, 'storageEngine', {value: 'localStorage'}
+			Object.defineProperty storageObject, 'key', {value: key}
+			Object.defineProperty storageObject, 'subscriptions', {configurable: true, writable: true, value: {}}
+			StorageCache[key] = readStorage storageObject
+			bindDynaStoreListeners key
+			for own subId, cb of StorageCache[key].subscriptions
+				cb.call StorageCache[key]
+			StorageCache[key]
+		else	# sync and return an existing storage object
+			readStorage StorageCache[key]
+
+window.addEventListener 'storage', (e) ->
+	storageKey = e.key.substr StorageKeyPrefix.length
+	if StorageCache[storageKey]?
+		readStorage StorageCache[key]
+		for own subId, cb of StorageCache[storageKey].subscriptions
+			cb.call StorageCache[storageKey]
+, false

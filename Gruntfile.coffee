@@ -24,7 +24,7 @@ grunt.initConfig
 				reserveDOMProperties: true
 				wrap:true
 			mangle:
-				except:['window', 'document', 'Monstera', 'DOM', 'REST', 'Templates', 'Routes']
+				except:['window', 'document', 'Monstera', 'DOM', 'REST', 'Templates', 'Routes', 'Data']
 			files:
 				'output/monstera.js': ['temp/monstera-dev.js', 'temp/monstera-addons.js']
 	

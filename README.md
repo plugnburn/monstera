@@ -24,12 +24,13 @@ DOM manupulation is the first-priority thing in Monstera. The library provides a
 
 - `Monstera.DOM.ready(callback)` - run a callback on `DOMContentLoaded` event, or immediately if the DOM is ready.
 - `Monstera.DOM.load(callback)` - run a callback on `load` event, or immediately if the document is already completely loaded.
-- `Monstera.DOM.on(selector, event, callback)` - setup a live `event` listener on any elements matching the `selector` or their descendants. You can specify several events, space-separated. Two parameters are passed to the `callback`: a standard DOM `Event` object and the actual element the listener was attached to.
+- `Monstera.DOM.on(selector, event, callback)` - setup a live `event` listener on any elements matching the `selector` or their descendants. You can specify several events, space-separated. A standard DOM `Event` object is passed to the callback, and the actual element the event is listening on is passed as `this`.
 - `Monstera.DOM.off(selector, event)` - remove a live `event` listener for any elements matching the `selector` or their descendants.
 - `Monstera.DOM.qS(selector)` - return the first element of the document matching the `selector` (shortcut for `window.document.querySelector`)
 - `Monstera.DOM.qSA(selector)` - return a DOM collection of all elements in the document matching the `selector` (shortcut for `window.document.querySelectorAll`)
 - `Monstera.DOM.prevent(eventObject)` - a shortcut to prevent any event from its default action and further propagation.
-- `Monstera.DOM.setupDropzone(selector, dropCallback)` - an easy way to set up basic drag-n-drop capabilities. Drop event object is passed to the callback.
+- `Monstera.DOM.getValue(element)` - an easy way to get a value of any DOM element regardless of its semantics (being it a `value` or `innerHTML` physically);
+- `Monstera.DOM.setValue(element, value)` - an easy way to set a value on any DOM element regardless of its semantics.
 
 Monstera.Routes
 ---------------
@@ -43,17 +44,19 @@ Client-side routing is an important task for a modern web app. Monstera microfra
 Monstera.Data
 -------------
 
-Monstera provides own persistent object data storage that can be bound to different adapters. This is by far the most powerful and versatile component in the microframework.
+Monstera provides its own persistent (or session-wide, at your choice) object data storage. This is by far the most powerful and versatile component in the microframework.
 
 ### Monstera.Data.Store
 
-The `Monstera.Data.Store` type is the building block of the storage system. You can easily create an instance by supplying a key to the constructor:
+The `Monstera.Data.Store` type is the building block of the storage system. You can easily create an instance by supplying a key:
 
-`var MyStore = new Monstera.Data.Store('MyApp')`
+`var MyStore = Monstera.Data.Store('MyApp')`
 
-If you have written a different adapter (see below), you can pass it as the second parameter. The only pre-installed adapter is `Monstera.Data.LocalStorageAdapter` and it's set up by default, so the above call could also be performed as:
+Alternatively, you can also use a `session:` prefix to create a session-wide storage:
 
-`var MyStore = new Monstera.Data.Store('MyApp', Monstera.Data.LocalStorageAdapter)`
+`var MyStore = Monstera.Data.Store('session:MyApp')`
+
+Note that you cannot have a persistent and session storage instances at the same time under the same key. One will overwrite another if you try to do so.
 
 Once you've created the storage object, you can use it just like any other JavaScript object - write/read properties, nest them etc. But if you want your changes to persist, you must call `save()` method like this:
 
@@ -62,16 +65,8 @@ MyStore.myProp = 'some value'
 MyStore.save()
 ```
 
-If you use just the default adapter (`Monstera.Data.LocalStorageAdapter`), you will not need the following method, but if you have written an adapter for the remote storage, you must be aware of it. The `sync()` method fetches current storage data, regardless of its source. Remember to save your local data before syncing in order not to get it overwritten!
 
-```
-MyStore.myProp = 'some value'
-MyStore.save() // we saved myProp to some remote storage
-MyStore.sync()
-console.log(MyStore.otherProp) // otherProp was set remotely and now we've fetched it
-```
-
-Each `Monstera.Data.Store` instance can have unlimited subscriptions. A subscription is a callback that runs on each `save()` or `sync()` for that storage. To subscribe for a change, just call `subscribe(callback)` method:
+Each `Monstera.Data.Store` instance can have unlimited subscriptions. A subscription is a callback that runs on each `save()` for that storage. To subscribe for a change, just call `subscribe(callback)` method:
 
 `var subscriptionId = MyStore.subscribe(function(){doSomethingElse(this.importantStuff)})`
 
@@ -90,24 +85,24 @@ Lastly, any storage object can be destroyed. To do that, just call the `destroy(
 
 The object reference itself may persist in memory (due to JS engine limitations) but the destruction means that:
 
-- physical adapter storage (localStorage, etc) responsible for the instance will be cleared (adapter's remover will be called - see below);
 - internal (in-memory) storage representation will be cleared;
 - all properties will become unavailable, so essentially the object will be no longer useful as a `Monstera.Data.Store` instance.
 
-### Monstera.Data.Adapter
+### Dynamic DOM data binding
 
-This is the interface for any new adapters you can create. You just have to provide three callback functions to the constructor: _setter_, _getter_ and _remover_. You can assign a newly created adapter to any object of your choice but `Monstera.Data` namespace itself is just fine for that.
+You can bind any existing first-level storage property to any DOM element value or contents (the necessary property is determined automatically depending on the element). Just write `YourStorageKey.YourPropery` into a `data-dyna-store` attribute. For example, to make auto-changes to a name property of your user data just modify your input tag:
 
-`Monstera.Data.MyOwnAdapter = new Monstera.Data.Adapter(setterFunc, getterFunc, removerFunc)`
+`<input type=text name=user placeholder="User name" data-dyna-store="User.name">`
 
-Three simple rules apply when creating a new adapter for Monstera.Data:
+Or you can even output it in the real time:
 
-- Setter callback must accept two parameters: string key and unserialized object.
-- Getter and remover callbacks must accept string key parameter only.
-- Getter must return an unserialized object.
+`<p>User name: <span data-dyna-store="User.name"></span></p>`
 
-Everything else is really up to you.
+Note that you have to make at least reference to the collection in your scripts before you can use this feature. For the above example to work, even this will do:
 
+`<script>Monstera.Data.Store('User')</script>`
+
+If you create a session storage (`Monstera.Data.Store('session:User')`), there is no need to  write `session:` prefix in your `data-dyna-store` attribute, the storage engine will be recognized automatically.
 
 Monstera.REST
 -------------

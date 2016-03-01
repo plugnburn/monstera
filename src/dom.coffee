@@ -18,7 +18,7 @@ do ->
 				evkey = genEventKey selector, evname
 				evcache[evkey] = (e) ->
 					if targetElem = e.target.closest selector
-						cb e, targetElem
+						cb.call targetElem, e
 				window.addEventListener evname, evcache[evkey], false
 		off: (selector, evtype) ->
 			for evname in evtype.split ' '
@@ -31,15 +31,19 @@ do ->
 		prevent: (e) ->
 			e.preventDefault()
 			e.stopPropagation()
-		setupDropzone: (selector, cb) ->
-			elem = dom.qS selector
-			elem.addEventListener 'dragover', (e) ->
-				dom.prevent e
-				e.dataTransfer.effect = 'copy'
-			, false
-			elem.addEventListener 'drop', (e) ->
-				dom.prevent e
-				cb e
-			, false
+		getValue: (elem) ->
+			tag = elem.tagName.toLowerCase()
+			if tag in ['input', 'textarea', 'select']
+				elem.value
+			else
+				elem.innerHTML
+		setValue: (elem, value) ->
+			tag = elem.tagName.toLowerCase()
+			if tag in ['input', 'textarea', 'select']
+				elem.value = value
+				if tag is 'select' and rightOption = elem.querySelector 'option[value="'+value+'"]'
+					rightOption.selected = true
+			else
+				elem.innerHTML = value
 
 	MonsteraLib.DOM = dom
