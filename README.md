@@ -44,7 +44,8 @@ Some basic functionality for non-blocking code loading and execution is built in
 For example, the following code tries to load [Mustache.js](https://github.com/janl/mustache.js) from an external resource and runs the initialization (see Monstera.Templates section) only when it's fully loaded:
 
 ```
-Monstera.Async.loadAndExpect('//cdn.rawgit.com/janl/mustache.js/cd06b22dabdaeffe3e4c74ee02bd492a11bbb740/mustache.min.js', 'Mustache', function(){
+var mustacheUrl = '//cdn.rawgit.com/janl/mustache.js/cd06b22dabdaeffe3e4c74ee02bd492a11bbb740/mustache.min.js'
+Monstera.Async.loadAndExpect(mustacheUrl, 'Mustache', function() {
 	Monstera.Templates.setupRenderer(Mustache.render)
 	// ... other templating stuff here ...
 })
