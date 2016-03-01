@@ -1,12 +1,12 @@
 Monstera: tiny web framework with great capabilities
 ====================================================
 
-**Monstera** (or `monstera.js`) is a very small (under ~7.5 KB minified, ~ 3 KB minified+gzipped) yet quite powerful microframework that allows you to build reach client-side web apps in a more consistent and a bit easier way.
+**Monstera** (or `monstera.js`) is a very small (under 7.5 KB minified, ~ 3 KB minified+gzipped) yet quite powerful microframework that allows you to build reach client-side web apps in a more consistent and a bit easier way.
 
 How to obtain
 -------------
 
-You can either download/include ready JS file [here](https://cdn.rawgit.com/plugnburn/monstera/40d3831d46728e6d9bd322c9144141ae98d13c39/output/monstera.js) or install all the necessary dependencies (Git, Node, NPM and `grunt-cli`) and then run:
+You can either download/include ready JS file [here](https://cdn.rawgit.com/plugnburn/monstera/9ad923b9772fc07c4c3782e9b9e378ba4d40005f/output/monstera.js) or install all the necessary dependencies (Git, Node, NPM and `grunt-cli`) and then run:
 
 ```
 git clone https://github.com/plugnburn/monstera.git
