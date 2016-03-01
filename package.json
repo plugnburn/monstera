@@ -1,6 +1,6 @@
 {
   "name": "monstera",
-  "version": "0.3.0",
+  "version": "0.3.5",
   "description": "A small library for rapid client-side web app development",
   "main": "monstera.js",
   "scripts": {
