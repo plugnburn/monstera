@@ -3,18 +3,19 @@ do ->
 	methodFilters = {}
 	
 	do resetMethodFilters = ->
+		jsonContentType = 'application/json;charset=utf-8'
 		methodFilters =
 			get:
 				request: (s) -> s
 				response: (s) -> JSON.parse s
 			post:
 				request: (s, xhr) -> 
-					xhr.setRequestHeader 'Content-Type', 'application/json'
+					xhr.setRequestHeader 'Content-Type', jsonContentType
 					JSON.stringify s
 				response: (s) -> JSON.parse s
 			put:
 				request: (s, xhr) -> 
-					xhr.setRequestHeader 'Content-Type', 'application/json'
+					xhr.setRequestHeader 'Content-Type', jsonContentType
 					JSON.stringify s
 				response: (s) -> JSON.parse s
 			'delete':
