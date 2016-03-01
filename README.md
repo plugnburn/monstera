@@ -26,10 +26,10 @@ DOM manupulation is the first-priority thing in Monstera. The library provides a
 - `Monstera.DOM.load(callback)` - run a callback on `load` event, or immediately if the document is already completely loaded.
 - `Monstera.DOM.on(selector, event, callback)` - setup a live `event` listener on any elements matching the `selector` or their descendants. You can specify several events, space-separated. A standard DOM `Event` object is passed to the callback, and the actual element the event is listening on is passed as `this`.
 - `Monstera.DOM.off(selector, event)` - remove a live `event` listener for any elements matching the `selector` or their descendants.
-- `Monstera.DOM.qS(selector)` - return the first element of the document matching the `selector` (shortcut for `window.document.querySelector`)
-- `Monstera.DOM.qSA(selector)` - return a DOM collection of all elements in the document matching the `selector` (shortcut for `window.document.querySelectorAll`)
+- `Monstera.DOM.qS(selector)` - return the first element of the document matching the `selector` (shortcut for `window.document.querySelector`).
+- `Monstera.DOM.qSA(selector)` - return a DOM collection of all elements in the document matching the `selector` (shortcut for `window.document.querySelectorAll`).
 - `Monstera.DOM.prevent(eventObject)` - a shortcut to prevent any event from its default action and further propagation.
-- `Monstera.DOM.getValue(element)` - an easy way to get a value of any DOM element regardless of its semantics (being it a `value` or `innerHTML` physically);
+- `Monstera.DOM.getValue(element)` - an easy way to get a value of any DOM element regardless of its semantics (being it a `value` or `innerHTML` physically).
 - `Monstera.DOM.setValue(element, value)` - an easy way to set a value on any DOM element regardless of its semantics.
 
 Monstera.Routes
@@ -38,7 +38,7 @@ Monstera.Routes
 Client-side routing is an important task for a modern web app. Monstera microframework offers a very simple yet powerful routing capabilities with just 3 methods:
 
 - `Monstera.Routes.add(path, handler)` - define a route. Parameters in the `:param` form are recognized too. Their values are passed in an object to the handler function.
-- `Monstera.Routes.remove(path)` - remove a previously defined route (use the same path you have used for `Monstera.Routes.add`)
+- `Monstera.Routes.remove(path)` - remove a previously defined route (use the same path you have used for `Monstera.Routes.add`).
 - `Mostera.Routes.go(path[, preventHistoryUpdates = false])` - go to a path, i.e. perform all actions as if the user entered the path in his browser. If the second parameter `preventHistoryUpdates` is true, the browser will not insert a new history entry.
 
 Monstera.Data
