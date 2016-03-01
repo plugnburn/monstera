@@ -1,7 +1,7 @@
 Monstera: tiny web framework with great capabilities
 ====================================================
 
-**Monstera** (or `monstera.js`) is a very small (under 7 KB minified, ~ 3 KB minified+gzipped) yet quite powerful microframework that allows you to build reach client-side web apps in a more consistent and a bit easier way.
+**Monstera** (or `monstera.js`) is a very small (under ~7.5 KB minified, ~ 3 KB minified+gzipped) yet quite powerful microframework that allows you to build reach client-side web apps in a more consistent and a bit easier way.
 
 How to obtain
 -------------
@@ -31,6 +31,24 @@ DOM manupulation is the first-priority thing in Monstera. The library provides a
 - `Monstera.DOM.prevent(eventObject)` - a shortcut to prevent any event from its default action and further propagation.
 - `Monstera.DOM.getValue(element)` - an easy way to get a value of any DOM element regardless of its semantics (being it a `value` or `innerHTML` physically).
 - `Monstera.DOM.setValue(element, value)` - an easy way to set a value on any DOM element regardless of its semantics.
+
+Monstera.Async
+--------------
+
+Some basic functionality for non-blocking code loading and execution is built into Monstera:
+
+- `Monstera.Async.nextTick(callback)` - execute the `callback` asynchronously, as soon as possible. Think of it as of in-browser `fork()` functionality.
+- `Monstera.Async.load(sourceUrl[, onLoadCallback])` - load an external JavaScript file into the document and fire an optional `onLoadCallback` when the file is loaded (**not when its execution is complete**, just when it's loaded).
+- `Monstera.Async.loadAndExpect(sourceUrl, globalObjectName, callback)` - load an external JavaScript file into the document and fire the `callback` when an object with `globalObjectName` becomes available in the global scope (`window`). If such an object already exists, no script is loaded and callback is run immediately.
+
+For example, the following code tries to load [Mustache.js](https://github.com/janl/mustache.js) from an external resource and runs the initialization (see Monstera.Templates section) only when it's fully loaded:
+
+```
+Monstera.Async.loadAndExpect('//cdn.rawgit.com/janl/mustache.js/cd06b22dabdaeffe3e4c74ee02bd492a11bbb740/mustache.min.js', 'Mustache', function(){
+	Monstera.Templates.setupRenderer(Mustache.render)
+	// ... other templating stuff here ...
+})
+```
 
 Monstera.Routes
 ---------------

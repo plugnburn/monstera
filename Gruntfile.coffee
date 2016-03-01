@@ -9,6 +9,7 @@ grunt.initConfig
 				'temp/monstera-dev.js': [
 					'src/init.coffee'		# global initialization
 					'src/polyfills.coffee'	# some important polyfills
+					'src/async.coffee'		# Monstera.Async
 					'src/dom.coffee'		# Monstera.DOM
 					'src/rest.coffee'		# Monstera.REST
 					'src/routes.coffee'		# Monstera.Routes
@@ -24,7 +25,7 @@ grunt.initConfig
 				reserveDOMProperties: true
 				wrap:true
 			mangle:
-				except:['window', 'document', 'Monstera', 'DOM', 'REST', 'Templates', 'Routes', 'Data']
+				except:['window', 'document', 'Monstera', 'DOM', 'REST', 'Async', 'Templates', 'Routes', 'Data']
 			files:
 				'output/monstera.js': ['temp/monstera-dev.js', 'temp/monstera-addons.js']
 	
