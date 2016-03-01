@@ -98,7 +98,7 @@ Or you can even output it in the real time:
 
 `<p>User name: <span data-dyna-store="User.name"></span></p>`
 
-Note that you have to make at least reference to the collection in your scripts before you can use this feature. For the above example to work, even this will do:
+Note that you have to make at least one reference to the collection in your scripts before you can use this feature. For the above example to work, even this will do:
 
 `<script>Monstera.Data.Store('User')</script>`
 
