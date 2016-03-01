@@ -90,7 +90,7 @@ The object reference itself may persist in memory (due to JS engine limitations)
 
 ### Dynamic DOM data binding
 
-You can bind any existing first-level storage property to any DOM element value or contents (the necessary property is determined automatically depending on the element). Just write `YourStorageKey.YourPropery` into a `data-dyna-store` attribute. For example, to make auto-changes to a name property of your user data just modify your input tag:
+You can bind any existing first-level storage property to any DOM element value or contents (the necessary property is determined automatically depending on the element). Just write `YourStorageKey.YourProperty` into a `data-dyna-store` attribute. For example, to make auto-changes to a name property of your user data just modify your input tag:
 
 `<input type=text name=user placeholder="User name" data-dyna-store="User.name">`
 
