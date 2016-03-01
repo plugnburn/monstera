@@ -183,7 +183,7 @@ Once you have chosen the way to fetch and write your templates and included the 
 
 `Monstera.Templates.render(selector, templatePathOrName, storeInstance)`
 
-That's it! Once you run a `save()` or `sync()` method on your `Monstera.Data.Store` instance, the template will be automagically refreshed with your new data on any element matching the `selector`. And if you have event listeners set up with `Monstera.DOM.on`, you will never lose them after template refreshing, nor you'll get any duplicates whatsoever. That's where different framework components perform together very well.
+That's it! Once your `Monstera.Data.Store` instance is saved, the template will be automagically refreshed with your new data on any element matching the `selector`. And if you have event listeners set up with `Monstera.DOM.on`, you will never lose them after template refreshing, nor you'll get any duplicates whatsoever. That's where different framework components perform together very well.
 
 If you need, for whatever reason, just to render a template with parameters into a string (but not bother fetching it and calling the underlying engine directly), you can use `renderText` method:
 
