@@ -3,20 +3,23 @@ StorageKeyPrefix = 'monstera.'
 DynaStoreAttrName = 'data-dyna-store'
 
 readStorage = (storageObject) ->
-	physicalKey = StorageKeyPrefix + storageObject.key
-	propSet = {}
-	try propSet = JSON.parse window[storageObject.storageEngine].getItem physicalKey
-	for own prop, val of propSet
-		storageObject[prop] = val
+	if storageObject.storageEngine?
+		physicalKey = StorageKeyPrefix + storageObject.key
+		propSet = {}
+		try propSet = JSON.parse window[storageObject.storageEngine].getItem physicalKey
+		for own prop, val of propSet
+			storageObject[prop] = val
 	return storageObject
 
 writeStorage = (storageObject) ->
-	physicalKey = StorageKeyPrefix + storageObject.key
-	window[storageObject.storageEngine].setItem physicalKey, JSON.stringify(storageObject)
+	if storageObject.storageEngine?
+		physicalKey = StorageKeyPrefix + storageObject.key
+		window[storageObject.storageEngine].setItem physicalKey, JSON.stringify(storageObject)
 	
 destroyStorage = (storageObject) ->
-	physicalKey = StorageKeyPrefix + storageObject.key
-	window[storageObject.storageEngine].removeItem physicalKey
+	if storageObject.storageEngine?
+		physicalKey = StorageKeyPrefix + storageObject.key
+		window[storageObject.storageEngine].removeItem physicalKey
 	
 # bind DynaStore listeners to any newly created storage object
 # returns storage-to-element subscription id
@@ -41,8 +44,26 @@ bindDynaStoreListeners = (key) ->
 				if (elemSet = DOM.qSA '['+DynaStoreAttrName+'="'+key+'.'+prop+'"]')?
 					DOM.setValue elem, val for elem in elemSet
 
+# populate data for remote storage type
+
+defineRemotePoller = (key, pollingInterval) ->
+	do initialPoller = ->
+		if StorageCache[key]?
+			do networkPoller = ->
+				MonsteraLib.REST.get StorageCache[key].remoteUrl, (newData) ->
+					stringCache = JSON.stringify(StorageCache[key])
+					if JSON.stringify(newData) isnt stringCache
+						for own prop, val of JSON.parse(stringCache)
+							delete StorageCache[key][prop] 
+						for own prop, val of newData
+							Object.defineProperty StorageCache[key], prop, {configurable: true, enumerable: true, writable: false, value: val}
+						StorageCache[key].save()
+					setTimeout networkPoller, pollingInterval
+		else
+			setTimeout initialPoller, pollingInterval
+					
 MonsteraLib.Data = 
-	Store: (key) ->
+	Store: (key, storageParams = {}) ->
 		unless StorageCache[key]? # create and cache a new storage object
 			storageObject =
 				save: -> 
@@ -55,6 +76,7 @@ MonsteraLib.Data =
 						subId = "monstera-sub-#{Math.random()*10000|0}"
 						break unless @subscriptions[subId]?
 					@subscriptions[subId] = cb
+					@subscriptions[subId].call this
 					subId
 				unsubscribe: (subId) -> 
 					delete @subscriptions[subId] if @subscriptions[subId]?
@@ -66,6 +88,13 @@ MonsteraLib.Data =
 			if key.indexOf('session:') is 0
 				Object.defineProperty storageObject, 'storageEngine', {value: 'sessionStorage'}
 				key = key.split(':')[1]
+			else if key.indexOf('remote:' is 0) and storageParams.url?
+				Object.defineProperty storageObject, 'remoteUrl', {value: storageParams.url}
+				pollingInterval = if storageParams.interval? then parseInt(storageParams.interval) else 1000
+				if pollingInterval < 100 then pollingInterval = 100
+				Object.defineProperty storageObject, 'pollingInterval', {value: pollingInterval}
+				key = key.split(':')[1]
+				defineRemotePoller key, pollingInterval
 			else
 				Object.defineProperty storageObject, 'storageEngine', {value: 'localStorage'}
 			Object.defineProperty storageObject, 'key', {value: key}

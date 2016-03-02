@@ -2,11 +2,9 @@ do ->
 	
 	renderer = (tplContent, params) -> tplContent #void renderer by default
 	fetcher = (tplPath, cb) ->
-		voidf = (s) -> s
-		MonsteraLib.REST.setupMethodFilters 'get', voidf, voidf
-		MonsteraLib.REST.get tplPath, (tplContent) ->
-			MonsteraLib.REST.resetMethodFilters
-			cb tplContent
+		MonsteraLib.REST.getRaw tplPath, (tplContent) ->
+			if tplContent?
+				cb tplContent
 			
 	subscriptionCache = {}
 	

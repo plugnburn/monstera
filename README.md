@@ -121,45 +121,51 @@ Note that you have to make at least one reference to the collection in your scri
 
 `<script>Monstera.Data.Store('User')</script>`
 
-If you create a session storage (`Monstera.Data.Store('session:User')`), there is no need to  write `session:` prefix in your `data-dyna-store` attribute, the storage engine will be recognized automatically.
+If you create a session storage (`Monstera.Data.Store('session:User')`), there is no need to write `session:` prefix in your `data-dyna-store` attribute, the storage engine will be recognized automatically.
+
+### Remote storage
+
+Since version 0.4, Monstera also provides an additional storage type prefix, `remote:`. Remote storage instances differ from persistent and session instances in the following two ways: first, they are effectively read-only at the client side; second, they are initialized with more parameters:
+
+`var remStore = Monstera.Data.Store('remote:MyRemoteApi', {url: '//example.com/api.json', interval: 2500})`
+
+As you can see, any remote storage initializer accepts 2 parameters: a key with `remote:` prefix and an options object with the following possible keys:
+
+- `url` (mandatory) - a remote URL that provides some JSON data;
+- `interval` (optional) - an interval (in millisecnods) of repeating remote server queries. If omitted, the URL is queried every 1 second.
+
+You cannot write to a remote storage (well, you can but all properties are completely overwritten on each remote change), while all reading functionality still remains: you can read properties at any time, `subscribe()` to the storage changes and even set up the `data-dyna-store` binding, all the previous rules apply. For example, you have the following JSON file on your server:
+
+`{"USDinUAH": 25.5, "EURinUAH": 30.4}`
+
+Then you can write in your markup:
+
+```
+<p>USD rate: <span data-dyna-store="ExchangeRates.USDinUAH"></span> UAH</p>
+<p>EUR rate: <span data-dyna-store="ExchangeRates.EURinUAH"></span> UAH</p>
+```
+
+And then set up a script with the initializer:
+
+`<script>Monstera.Data.Store('remote:ExchangeRates', {url:'/our-exchange-rates.json'})</script>`
+
+And the above rates will update locally whenever remote JSON file changes.
 
 Monstera.REST
 -------------
 
-All basic interaction with server-side is simplified for you. First of all, Monstera has 4 popular HTTP method shortcuts:
+All basic interaction with server-side is simplified for you. Monstera has all popular HTTP method shortcuts:
 
 - `Monstera.REST.get(url, callback[, errorCallback])`
+- `Monstera.REST.getRaw(url, callback[, errorCallback])`
 - `Monstera.REST.post(url, object, callback[, errorCallback])`
+- `Monstera.REST.postRaw(url, rawData, callback[, errorCallback])`
 - `Monstera.REST.put(url, object, callback[, errorCallback])`
 - `Monstera.REST.delete(url, callback[, errorCallback])`
 
 All success callbacks accept a single parameter: response data object. Error callbacks, if specified, accept two parameters: response data object and HTTP status code.
 
-By default, all request (for `POST` and `PUT` methods) and response (for all methods) data objects are automatically JSON-serialized and deserialized. However, you can override this behaviour at any time for any method by calling `Monstera.REST.setupMethodFilters` function. It has the following syntax:
-
-`Monstera.REST.setupMethodFilters(method, requestFilterFunction, responseFilterFunction)`
-
-Here, `method` is the HTTP method whose behavoiur we're changing.
-
-`requestFilterFunction` is the function that specifies what to do with the input data before they're actually sent. It accepts two parameters - raw data and `XMLHttpRequest` object - and must return processed data.
-
-Similarly, `responseFilterFunction` is the function that specifies what to do with the response data before they're returned to the callback, and accepts only one parameter.
-
-For example, if we want to set up `POST` requests to deal with raw data only, without any JSON marshaling, we can call:
-
-`Monstera.REST.setupMethodFilters('post', function(s){return s}, function(s){return s})`
-
-And if we want to return to the default behaviour later, we could call:
-
-```
-Monstera.REST.setupMethodFilters('post', function(s, xhr) {
-	xhr.setRequestHeader('Content-Type', 'application/json');
-	return JSON.stringify(s)
-}, function(s){return JSON.parse(s)})
-```
-
-But, for your convenience, if you want to reset all method filters at once, you can call a special method `Monstera.REST.resetMethodFilters()`, and everything will be in its initial state.
-
+By default, all request (for `POST` and `PUT` methods) and response (for all methods) data objects are automatically JSON-serialized and deserialized. However, for `GET` and `POST` methods you can also use `Monstera.REST.getRaw` and `Monstera.REST.postRaw` calls. They imply no JSON marshaling and operate raw text data both as the request and the response.
 
 Monstera.Templates
 ------------------
